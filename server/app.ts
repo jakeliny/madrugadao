@@ -3,14 +3,14 @@ import * as request from 'request';
 import database from './db';
 import controller from './controller';
 
-class App{
+class App {
 
     public app: express.Application;
     private database: database;
     private controller: controller;
 
-    
-    constructor(){
+
+    constructor() {
         this.app = express();
         this.routes();
         this.database = new database();
@@ -19,13 +19,16 @@ class App{
     }
 
 
-    routes(){
-        this.app.route('/').get((req, res) => res.status(200).json({"result" : "conectado"}));
+    routes() {
+        this.app.route('/').get((req, res) => res.status(200).json({ "result": "conectado" }));
         this.app.route('/api/refresh').get(this.getEndPoint.bind(this));
         this.app.route('/api/dados').get((req, res) => this.controller.select(req, res));
+
+        this.app.route('/api/dados/:id').get((req, res) => this.controller.selectOne(req, res));
+        this.app.route('/api/dados/:id').delete((req, res) => this.controller.deleteOne(req, res));
     }
 
-    getEndPoint(req, res){      
+    getEndPoint(req, res) {
         request('https://crush-management.herokuapp.com/api/crushs', (error, response, data) => this.controller.create(data, res));
     }
 
