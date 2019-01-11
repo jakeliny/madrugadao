@@ -1,5 +1,7 @@
 import * as express from 'express';
 import * as request from 'request';
+import * as bodyParser from 'body-parser';
+
 import database from './db';
 import controller from './controller';
 
@@ -12,11 +14,17 @@ class App {
 
     constructor() {
         this.app = express();
+        this.middleware();
         this.routes();
         this.database = new database();
         this.database.createConnection();
         this.controller = new controller();
     }
+
+    middleware(){
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+      }
 
 
     routes() {
@@ -26,6 +34,7 @@ class App {
 
         this.app.route('/api/dados/:id').get((req, res) => this.controller.selectOne(req, res));
         this.app.route('/api/dados/:id').delete((req, res) => this.controller.deleteOne(req, res));
+        this.app.route('/api/dados/:id').put((req, res) => this.controller.update(req, res));
     }
 
     getEndPoint(req, res) {

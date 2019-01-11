@@ -62,7 +62,22 @@ class Controller {
     }
 
     deleteByID(id) {
-        return model.remove(id);
+        return model.deleteOne(id);
+    }
+
+
+    //update
+    update(req, res) {
+        const id = { _id: req.params.id }
+        const crush = req.body;
+ 
+        this.updateCrush(id, crush)
+            .then(crush => res.status(200).json({ 'result': crush }))
+            .catch(err => res.status(400).json({ 'result': err }));
+    }
+
+    updateCrush(id, data) {
+        return model.findOneAndReplace(id, data);
     }
 }
 
